@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrix Digital Rain</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: black;
+            color: #0F0;
+        }
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        #message {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: monospace;
+            font-size: 30pt;
+            text-align: center;
+            color: #0F0;
+            display: none;
+            opacity: 0.5;
+        }
+    </style>
+    <script>
+        function TheMatrix() {
+            var canvas = document.getElementById('matrixCanvas');
+            var ctx = canvas.getContext('2d');
+            var width = canvas.width = window.innerWidth;
+            var height = canvas.height = window.innerHeight;
+            var columns = Math.floor(width / 10);
+            var drops = Array(columns).fill(1);
+            var messageDisplayed = false;
+
+            function resizeCanvas() {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+                columns = Math.floor(width / 10);
+                drops = Array(columns).fill(1);
+            }
+
+            function draw() {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                ctx.fillRect(0, 0, width, height);
+                ctx.fillStyle = '#0F0';
+                ctx.font = '10pt monospace';
+
+                for (var i = 0; i < drops.length; i++) {
+                    var text = String.fromCharCode(0x30A0 + Math.random() * 96);
+                    ctx.fillText(text, i * 10, drops[i] * 10);
+                    if (drops[i] * 10 > height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                        if (!messageDisplayed) {
+                            showMessage();
+                            messageDisplayed = true;
+                        }
+                    }
+                    drops[i]++;
+                }
+            }
+
+            function showMessage() {
+                var message = document.getElementById('message');
+                message.style.display = 'block';
+                var start = -50;
+                var end = window.innerHeight / 2 - 15;
+                var speed = 2;
+
+                function animate() {
+                    start += speed;
+                    message.style.top = start + 'px';
+                    if (start < end) {
+                        requestAnimationFrame(animate);
+                    } else {
+                        message.style.opacity = 1;
+                    }
+                }
+
+                animate();
+            }
+
+            window.addEventListener('resize', resizeCanvas);
+            setInterval(draw, 33);
+        }
+
+        window.onload = TheMatrix;
+    </script>
+</head>
+<body>
+    <canvas id="matrixCanvas"></canvas>
+    <div id="message"></div>
+</body>
+</html>
